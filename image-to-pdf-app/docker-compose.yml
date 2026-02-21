@@ -1,0 +1,32 @@
+# ──────────────────────────────────────────────────────────
+# Docker Compose — Full stack: Frontend (Nginx) + Backend (FastAPI)
+# Run:  docker-compose up --build
+# ──────────────────────────────────────────────────────────
+
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: img2pdf-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - ALLOWED_ORIGINS=http://localhost,http://localhost:80
+      - TEMP_DIR=temp_files
+      - MAX_FILE_SIZE_MB=10
+    volumes:
+      - backend_temp:/app/temp_files
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: img2pdf-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  backend_temp:
