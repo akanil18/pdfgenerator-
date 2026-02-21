@@ -9,13 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^16.5.0",
+    "axios": "^1.6.2",
+    "browser-image-compression": "^2.0.2",
+    "framer-motion": "^10.16.16",
+    "lucide-react": "^0.303.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "axios": "^1.6.2",
-    "framer-motion": "^10.16.16",
     "react-dropzone": "^14.2.3",
-    "@hello-pangea/dnd": "^16.5.0",
-    "lucide-react": "^0.303.0",
     "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
+import imageCompression from "browser-image-compression";
 import {
   Shield,
   Zap,
@@ -109,14 +110,83 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [compressing, setCompressing] = useState(false);
+  const [compressionProgress, setCompressionProgress] = useState({ done: 0, total: 0 });
+
+  /* ── Image compression options ──────────────────────── */
+  const COMPRESSION_OPTIONS = {
+    maxSizeMB: 1,            // Compress to max 1 MB per image
+    maxWidthOrHeight: 2048,  // Resize if larger than 2048px
+    useWebWorker: true,      // Use web worker for non-blocking compression
+    fileType: "image/jpeg",  // Output as JPEG for best compression
+    initialQuality: 0.85,    // 85% quality — great balance of size vs quality
+  };
+
+  /* ── Compress a single image ────────────────────────── */
+  const compressImage = async (file) => {
+    // Skip compression for small files (< 1 MB) or GIFs
+    if (file.size <= 1 * 1024 * 1024 || file.type === "image/gif") {
+      return file;
+    }
+
+    try {
+      const compressed = await imageCompression(file, COMPRESSION_OPTIONS);
+
+      // Preserve original filename with proper extension
+      const ext = COMPRESSION_OPTIONS.fileType === "image/jpeg" ? ".jpg" : ".png";
+      const baseName = file.name.replace(/\.[^.]+$/, "");
+      const renamedFile = new File([compressed], `${baseName}${ext}`, {
+        type: compressed.type,
+        lastModified: Date.now(),
+      });
+
+      const savedPercent = ((1 - renamedFile.size / file.size) * 100).toFixed(0);
+      console.log(
+        `📦 ${file.name}: ${(file.size / 1024 / 1024).toFixed(1)}MB → ${(renamedFile.size / 1024 / 1024).toFixed(1)}MB (${savedPercent}% smaller)`
+      );
+
+      return renamedFile;
+    } catch (err) {
+      console.warn(`Compression failed for ${file.name}, using original:`, err);
+      return file; // Fallback to original if compression fails
+    }
+  };
 
   /* ── Handlers ───────────────────────────────────────── */
 
-  const handleFilesAdded = useCallback((newFiles) => {
-    setImages((prev) => [...prev, ...newFiles]);
-    toast.success(`${newFiles.length} image${newFiles.length > 1 ? "s" : ""} added`, {
-      icon: "📸",
-    });
+  const handleFilesAdded = useCallback(async (newFiles) => {
+    setCompressing(true);
+    setCompressionProgress({ done: 0, total: newFiles.length });
+
+    const compressedFiles = [];
+    let totalOriginal = 0;
+    let totalCompressed = 0;
+
+    for (let i = 0; i < newFiles.length; i++) {
+      totalOriginal += newFiles[i].size;
+      const compressed = await compressImage(newFiles[i]);
+      totalCompressed += compressed.size;
+      compressedFiles.push(compressed);
+      setCompressionProgress({ done: i + 1, total: newFiles.length });
+    }
+
+    setImages((prev) => [...prev, ...compressedFiles]);
+    setCompressing(false);
+
+    // Show compression stats in toast
+    const savedMB = ((totalOriginal - totalCompressed) / 1024 / 1024).toFixed(1);
+    const savedPercent = ((1 - totalCompressed / totalOriginal) * 100).toFixed(0);
+
+    if (totalOriginal > totalCompressed && savedPercent > 5) {
+      toast.success(
+        `${newFiles.length} image${newFiles.length > 1 ? "s" : ""} added — saved ${savedMB}MB (${savedPercent}% smaller)`,
+        { icon: "📦", duration: 3000 }
+      );
+    } else {
+      toast.success(`${newFiles.length} image${newFiles.length > 1 ? "s" : ""} added`, {
+        icon: "📸",
+      });
+    }
   }, []);
 
   const handleReorder = useCallback((from, to) => {
@@ -303,6 +373,41 @@ export default function Home() {
 
       {/* Main workspace */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 pb-24">
+        {/* Compression progress overlay */}
+        <AnimatePresence>
+          {compressing && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-200/60 shadow-md"
+            >
+              <div className="flex items-center gap-3">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="w-8 h-8 rounded-full border-2 border-violet-300 border-t-violet-600"
+                />
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-violet-700">
+                    Compressing images… {compressionProgress.done}/{compressionProgress.total}
+                  </p>
+                  <div className="mt-1.5 h-2 bg-violet-100 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-violet-500 to-indigo-500 rounded-full"
+                      initial={{ width: "0%" }}
+                      animate={{
+                        width: `${(compressionProgress.done / compressionProgress.total) * 100}%`,
+                      }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <UploadZone onFilesAdded={handleFilesAdded} />
 
         <ImagePreview
