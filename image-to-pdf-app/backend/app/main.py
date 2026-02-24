@@ -15,6 +15,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 from app.routes.convert import router as convert_router
+from app.routes.merge import router as merge_router
+from app.routes.split import router as split_router
+from app.routes.pdf_to_word import router as word_router
+from app.routes.pdf_to_excel import router as excel_router
+from app.routes.pdf_to_ppt import router as ppt_router
+from app.routes.compress import router as compress_router
+from app.routes.unlock import router as unlock_router
 from app.utils.file_handler import cleanup_temp_directory, ensure_temp_directory
 
 # ---------------------------------------------------------------------------
@@ -38,7 +45,7 @@ ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",
 async def lifespan(app: FastAPI):
     """Ensure temp directory exists on startup and is cleaned on shutdown."""
     ensure_temp_directory()
-    logger.info("🚀  Image-to-PDF backend is starting …")
+    logger.info("🚀  PDF Toolkit backend is starting …")
     yield
     cleanup_temp_directory()
     logger.info("🛑  Backend shutting down — temp files cleaned.")
@@ -48,9 +55,9 @@ async def lifespan(app: FastAPI):
 # Application
 # ---------------------------------------------------------------------------
 app = FastAPI(
-    title="Image to PDF Converter API",
-    description="Upload images and convert them into a single PDF document.",
-    version="1.0.0",
+    title="PDF Toolkit API",
+    description="A complete PDF toolkit — convert, merge, split, compress, unlock, and more.",
+    version="2.0.0",
     lifespan=lifespan,
 )
 
@@ -63,8 +70,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Routes
+# Routes — each feature has its own router
 app.include_router(convert_router, prefix="/api")
+app.include_router(merge_router, prefix="/api")
+app.include_router(split_router, prefix="/api")
+app.include_router(word_router, prefix="/api")
+app.include_router(excel_router, prefix="/api")
+app.include_router(ppt_router, prefix="/api")
+app.include_router(compress_router, prefix="/api")
+app.include_router(unlock_router, prefix="/api")
 
 
 # ---------------------------------------------------------------------------
@@ -72,4 +86,4 @@ app.include_router(convert_router, prefix="/api")
 # ---------------------------------------------------------------------------
 @app.get("/", tags=["Health"])
 async def health_check():
-    return {"status": "healthy", "service": "Image-to-PDF Converter"}
+    return {"status": "healthy", "service": "PDF Toolkit", "version": "2.0.0"}

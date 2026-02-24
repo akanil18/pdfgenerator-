@@ -11,9 +11,9 @@ This means multiple users converting simultaneously never conflict.
 
 import os
 import logging
-from typing import List
+from typing import List, Optional
 
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Form
 from fastapi.responses import FileResponse
 from starlette.background import BackgroundTask
 
@@ -35,17 +35,23 @@ router = APIRouter(tags=["Convert"])
 # ---------------------------------------------------------------------------
 
 @router.post("/convert")
-async def convert_images_to_pdf(files: List[UploadFile] = File(...)):
+async def convert_images_to_pdf(
+    files: List[UploadFile] = File(...),
+    page_size: Optional[str] = Form("fit"),
+):
     """
     Accept multiple image uploads and return a single merged PDF.
     Each request is fully isolated via a unique session directory.
+
+    Query params:
+      page_size  — "fit" (default), "a4", or "letter"
     """
 
     # --- Guard: no files ---------------------------------------------------
     if not files:
         raise HTTPException(status_code=400, detail="No files were uploaded.")
 
-    logger.info(f"Received {len(files)} file(s) for conversion.")
+    logger.info(f"Received {len(files)} file(s) for conversion (page_size={page_size}).")
 
     # --- Create isolated session directory for this request ----------------
     session_dir = create_session_dir()
@@ -73,7 +79,7 @@ async def convert_images_to_pdf(files: List[UploadFile] = File(...)):
             saved_paths.append(path)
 
         # --- Convert to PDF -----------------------------------------------
-        pdf_path = images_to_pdf(saved_paths, session_dir)
+        pdf_path = images_to_pdf(saved_paths, session_dir, page_size=page_size)
 
         # --- Return PDF as download ---------------------------------------
         # BackgroundTask cleans up the entire session dir AFTER response is sent

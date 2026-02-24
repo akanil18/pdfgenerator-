@@ -21,7 +21,7 @@ function FloatingDots() {
       {[...Array(6)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-2 h-2 rounded-full bg-violet-300/30"
+          className="absolute w-2 h-2 rounded-full bg-red-300/30"
           style={{
             left: `${15 + i * 14}%`,
             top: `${20 + (i % 3) * 25}%`,
@@ -75,23 +75,22 @@ export default function UploadZone({ onFilesAdded }) {
         className={`
           relative group cursor-pointer overflow-hidden
           rounded-2xl border-2 border-dashed transition-all duration-500
-          ${
-            isDragReject
-              ? "border-red-400 bg-red-50 shadow-lg shadow-red-100"
-              : isDragActive
-              ? "border-violet-400 bg-violet-50/60 scale-[1.02] shadow-xl shadow-violet-100"
-              : "border-gray-200 bg-white hover:border-violet-300 hover:bg-violet-50/20 hover:shadow-lg hover:shadow-violet-50"
+          ${isDragReject
+            ? "border-red-400 bg-red-50 shadow-lg shadow-red-100"
+            : isDragActive
+              ? "border-red-400 bg-red-50/60 scale-[1.02] shadow-xl shadow-red-100"
+              : "border-gray-200 bg-white hover:border-red-300 hover:bg-red-50/20 hover:shadow-lg hover:shadow-red-50"
           }
         `}
       >
         {/* Animated gradient blobs */}
         <motion.div
-          className="absolute -top-24 -right-24 w-72 h-72 bg-gradient-to-br from-violet-200/20 to-indigo-200/20 rounded-full blur-3xl"
+          className="absolute -top-24 -right-24 w-72 h-72 bg-gradient-to-br from-red-200/20 to-rose-200/20 rounded-full blur-3xl"
           animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
         />
         <motion.div
-          className="absolute -bottom-16 -left-16 w-48 h-48 bg-gradient-to-tr from-pink-200/20 to-violet-200/20 rounded-full blur-3xl"
+          className="absolute -bottom-16 -left-16 w-48 h-48 bg-gradient-to-tr from-pink-200/20 to-red-200/20 rounded-full blur-3xl"
           animate={{ scale: [1, 1.3, 1], rotate: [0, -60, 0] }}
           transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
         />
@@ -121,13 +120,13 @@ export default function UploadZone({ onFilesAdded }) {
                 animate={{ scale: 1.15, y: 0 }}
                 exit={{ scale: 0, y: -30 }}
                 transition={{ type: "spring", stiffness: 300, damping: 12 }}
-                className="p-5 rounded-2xl bg-violet-100 shadow-lg shadow-violet-100"
+                className="p-5 rounded-2xl bg-red-100 shadow-lg shadow-red-100"
               >
                 <motion.div
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 1, repeat: Infinity }}
                 >
-                  <ImagePlus className="w-12 h-12 text-violet-600" />
+                  <ImagePlus className="w-12 h-12 text-red-600" />
                 </motion.div>
               </motion.div>
             ) : (
@@ -137,12 +136,12 @@ export default function UploadZone({ onFilesAdded }) {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.7, opacity: 0 }}
                 whileHover={{ scale: 1.08, rotate: 3 }}
-                className="relative p-5 rounded-2xl bg-gradient-to-br from-violet-100 to-indigo-100 shadow-lg shadow-violet-100/50"
+                className="relative p-5 rounded-2xl bg-gradient-to-br from-red-100 to-rose-100 shadow-lg shadow-red-100/50"
               >
-                <UploadCloud className="w-12 h-12 text-violet-600" />
+                <UploadCloud className="w-12 h-12 text-red-600" />
                 {/* Pulsing ring */}
                 <motion.div
-                  className="absolute inset-0 rounded-2xl border-2 border-violet-300/50"
+                  className="absolute inset-0 rounded-2xl border-2 border-red-300/50"
                   animate={{ scale: [1, 1.3], opacity: [0.5, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 />
@@ -158,14 +157,14 @@ export default function UploadZone({ onFilesAdded }) {
               {isDragReject
                 ? "Unsupported file type!"
                 : isDragActive
-                ? "Drop your images here…"
-                : "Drag & drop images here"}
+                  ? "Drop your images here…"
+                  : "Drag & drop images here"}
             </motion.p>
             <p className="mt-1.5 text-sm text-gray-400">
               or{" "}
               <motion.span
-                className="text-violet-600 font-medium underline underline-offset-2 cursor-pointer"
-                whileHover={{ color: "#7c3aed" }}
+                className="text-red-600 font-medium underline underline-offset-2 cursor-pointer"
+                whileHover={{ color: "#dc2626" }}
               >
                 browse files
               </motion.span>

@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { FileImage, Sparkles, Github } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
@@ -11,22 +12,24 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3">
         {/* Logo */}
-        <motion.div
-          className="flex items-center gap-2.5 cursor-pointer"
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-        >
+        <Link to="/">
           <motion.div
-            className="p-2 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 shadow-lg shadow-violet-200/60"
-            animate={{ rotate: [0, 5, -5, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="flex items-center gap-2.5 cursor-pointer"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
           >
-            <FileImage className="w-5 h-5 text-white" />
+            <motion.div
+              className="p-2 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 shadow-lg shadow-red-200/60"
+              animate={{ rotate: [0, 5, -5, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <FileImage className="w-5 h-5 text-white" />
+            </motion.div>
+            <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
+              Img2PDF
+            </span>
           </motion.div>
-          <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-            Img2PDF
-          </span>
-        </motion.div>
+        </Link>
 
         {/* Right side */}
         <div className="flex items-center gap-3">
@@ -36,7 +39,7 @@ export default function Navbar() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
             whileHover={{ scale: 1.05, y: -1 }}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-100 text-xs font-medium text-violet-700"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-red-50 to-rose-50 border border-red-100 text-xs font-medium text-red-700"
           >
             <motion.div
               animate={{ rotate: [0, 15, -15, 0], scale: [1, 1.1, 1] }}
@@ -55,7 +58,7 @@ export default function Navbar() {
             transition={{ delay: 0.7 }}
             whileHover={{ scale: 1.1, rotate: 10 }}
             whileTap={{ scale: 0.9 }}
-            className="p-2 rounded-lg text-gray-400 hover:text-violet-600 hover:bg-violet-50 transition-colors"
+            className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
           >
             <Github className="w-4 h-4" />
           </motion.a>
