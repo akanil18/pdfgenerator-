@@ -12,6 +12,8 @@ import PdfToExcelPage from "./pages/PdfToExcelPage";
 import PdfToPptPage from "./pages/PdfToPptPage";
 import CompressPdfPage from "./pages/CompressPdfPage";
 import UnlockPdfPage from "./pages/UnlockPdfPage";
+import HandwritingPage from "./pages/HandwritingPage";
+import AnalyticsPage from "./pages/AnalyticsPage";
 
 export default function App() {
   return (
@@ -35,6 +37,10 @@ export default function App() {
             <Route path="/pdf-to-ppt" element={<PdfToPptPage />} />
             <Route path="/compress-pdf" element={<CompressPdfPage />} />
             <Route path="/unlock-pdf" element={<UnlockPdfPage />} />
+            <Route path="/handwriting" element={<HandwritingPage />} />
+
+            {/* Analytics */}
+            <Route path="/analytics" element={<AnalyticsPage />} />
           </Routes>
         </div>
       </ImageProvider>

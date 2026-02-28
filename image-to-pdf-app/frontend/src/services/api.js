@@ -93,4 +93,26 @@ export async function unlockPdf(file, password, onProgress) {
   return blobPost("/unlock", fd, onProgress);
 }
 
+/* ───── Handwriting to PDF ───── */
+
+export async function handwritingToPdf(file, onProgress) {
+  const fd = new FormData();
+  fd.append("file", file);
+  return api
+    .post("/handwriting", fd, {
+      headers: { "Content-Type": "multipart/form-data" },
+      responseType: "blob",
+      timeout: 300_000, // 5 min — GPT-4o Vision processing is slower
+      ...makeProgress(onProgress),
+    })
+    .then((r) => r.data);
+}
+
+/* ───── Analytics ───── */
+
+export async function getAnalytics() {
+  const response = await api.get("/analytics");
+  return response.data;
+}
+
 export default api;

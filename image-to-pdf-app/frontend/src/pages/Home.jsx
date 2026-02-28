@@ -9,6 +9,7 @@ import {
   MonitorPlay,
   Minimize2,
   Unlock,
+  PenTool,
   Star,
   Shield,
   Zap,
@@ -97,6 +98,16 @@ const TOOLS = [
     shadow: "shadow-teal-200/60",
     bg: "bg-teal-50",
     path: "/unlock-pdf",
+  },
+  {
+    id: "handwriting",
+    title: "Handwriting to PDF",
+    desc: "Convert handwritten notes to clean, typeset documents using AI-powered recognition.",
+    icon: PenTool,
+    gradient: "from-indigo-500 to-purple-500",
+    shadow: "shadow-indigo-200/60",
+    bg: "bg-indigo-50",
+    path: "/handwriting",
   },
 ];
 

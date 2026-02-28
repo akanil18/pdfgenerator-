@@ -1,6 +1,6 @@
 """
-Image-to-PDF Converter — FastAPI Backend
-Main application entry point with CORS, routing, and lifecycle management.
+PDF Toolkit — FastAPI Backend
+Main application entry point with CORS, routing, analytics, and lifecycle management.
 
 MULTI-USER: Each request uses an isolated session directory (UUID-based).
 No shared state — fully safe for concurrent users.
@@ -22,6 +22,10 @@ from app.routes.pdf_to_excel import router as excel_router
 from app.routes.pdf_to_ppt import router as ppt_router
 from app.routes.compress import router as compress_router
 from app.routes.unlock import router as unlock_router
+from app.routes.handwriting import router as handwriting_router
+from app.routes.analytics import router as analytics_router
+from app.analytics.db import init_db
+from app.analytics.middleware import AnalyticsMiddleware
 from app.utils.file_handler import cleanup_temp_directory, ensure_temp_directory
 
 # ---------------------------------------------------------------------------
@@ -43,8 +47,9 @@ ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",
 # ---------------------------------------------------------------------------
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Ensure temp directory exists on startup and is cleaned on shutdown."""
+    """Ensure temp directory exists on startup, init analytics DB."""
     ensure_temp_directory()
+    init_db()
     logger.info("🚀  PDF Toolkit backend is starting …")
     yield
     cleanup_temp_directory()
@@ -70,6 +75,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Analytics middleware — tracks every /api/* request
+app.add_middleware(AnalyticsMiddleware)
+
 # Routes — each feature has its own router
 app.include_router(convert_router, prefix="/api")
 app.include_router(merge_router, prefix="/api")
@@ -79,6 +87,8 @@ app.include_router(excel_router, prefix="/api")
 app.include_router(ppt_router, prefix="/api")
 app.include_router(compress_router, prefix="/api")
 app.include_router(unlock_router, prefix="/api")
+app.include_router(handwriting_router, prefix="/api")
+app.include_router(analytics_router, prefix="/api")
 
 
 # ---------------------------------------------------------------------------

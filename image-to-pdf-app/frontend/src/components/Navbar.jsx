@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileImage, Sparkles, Github } from "lucide-react";
+import { FileImage, Sparkles, Github, BarChart3 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
@@ -26,7 +26,7 @@ export default function Navbar() {
               <FileImage className="w-5 h-5 text-white" />
             </motion.div>
             <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
-              Img2PDF
+              PDF Toolkit
             </span>
           </motion.div>
         </Link>
@@ -49,6 +49,21 @@ export default function Navbar() {
             </motion.div>
             Free &amp; Unlimited
           </motion.div>
+
+          {/* Analytics link */}
+          <Link to="/analytics">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+              title="Analytics"
+            >
+              <BarChart3 className="w-4 h-4" />
+            </motion.div>
+          </Link>
 
           {/* GitHub link placeholder */}
           <motion.a
